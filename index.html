@@ -2809,8 +2809,7 @@
 
     <script>
         // Firebase configuration - Replace with your own config
-        // Your web app's Firebase configuration
-		const firebaseConfig = {
+        const firebaseConfig = {
 		  apiKey: "AIzaSyB3Vnmc6LLM8zvcfTdyNTAiZziD9IBhHkw",
 		  authDomain: "events-4e-02.firebaseapp.com",
 		  projectId: "events-4e-02",
@@ -2818,6 +2817,7 @@
 		  messagingSenderId: "489418004363",
 		  appId: "1:489418004363:web:4e5c9a6ee2df2aea47818e"
 		};
+
         // Initialize Firebase
         let app, database, auth;
         let currentUser = null;
@@ -3565,30 +3565,12 @@
 
         // Load project data
         function loadProjectData() {
-            if (!currentProjectId) {
-                initializeApp();
-                return;
-            }
-
-            if (firebaseInitialized) {
-                dbRef = database.ref(`projects/${currentProjectId}`);
-                dbRef.once('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        appSettings = data.appSettings || { ...defaultSettings };
-                        eventConfig = data.eventConfig || { ...defaultEventConfig };
-                        venues = data.venues ? Object.values(data.venues) : [];
-                        experiences = data.experiences ? Object.values(data.experiences) : [];
-                        scheduledSessions = data.scheduledSessions ? Object.values(data.scheduledSessions) : [];
-                        initializeApp();
-                    } else {
-                        initializeApp();
-                    }
-                });
-            } else {
-                initializeApp();
-            }
-        }
+			if (firebaseInitialized && currentProjectId) {
+				dbRef = database.ref(`projects/${currentProjectId}`);
+				setupRealtimeSync();  // Attach real-time listeners
+			}
+			initializeApp(); // Ensure UI initializes regardless
+		}
 
         // Save data to Firebase
         function saveToFirebase(path, data) {
